@@ -1,10 +1,13 @@
 {
   "name": "store-ssm-parameters",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Store SSM parameters from YAML",
   "main": "store-ssm-parameters.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "store-ssm-parameters": "store-ssm-parameters.js"
   },
   "author": "Eetu Tuomala <hopeatussi@gmail.com>",
   "license": "MIT",
