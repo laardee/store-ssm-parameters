@@ -1,0 +1,22 @@
+{
+  "name": "store-ssm-parameters",
+  "version": "0.1.0",
+  "description": "Store SSM parameters from YAML",
+  "main": "store-ssm-parameters.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eetu Tuomala <hopeatussi@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laardee/store-ssm-parameters.git"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.215.1",
+    "js-yaml": "^3.11.0",
+    "lodash": "^4.17.5",
+    "promise-queue": "^2.2.5",
+    "yargs": "^11.0.0"
+  }
+}
