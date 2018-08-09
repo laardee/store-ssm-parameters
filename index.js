@@ -75,7 +75,7 @@ function createCloudFormationTemplate(parameterPaths) {
 AWSTemplateFormatVersion: "2010-09-09"
 Resources:
 ${parameterPaths.map(parameterPath => `
-  ${parameterPath.Name.replace(/\//g, 'Slash').replace(/\-/g, 'Dash')}:
+  ${parameterPath.Name.replace(/\//g, 'Slash').replace(/\-/g, 'Dash').replace(/\./g, 'Dot')}:
     Type: "AWS::SSM::Parameter"
     Properties:
       Name: "${parameterPath.Name}"
