@@ -71,17 +71,31 @@ function storeParameter(parameter) {
 }
 
 function createCloudFormationTemplate(parameterPaths) {
+  let dependsOn = '';
+  let previousLogicalId;
   return `---
 AWSTemplateFormatVersion: "2010-09-09"
-Resources:
-${parameterPaths.map(parameterPath => `
-  ${parameterPath.Name.replace(/\//g, 'Slash').replace(/\-/g, 'Dash').replace(/\./g, 'Dot')}:
+Resources: ${parameterPaths
+    .map(parameterPath => {
+      const logicalId = parameterPath.Name.replace(/\//g, 'Slash')
+        .replace(/\-/g, 'Dash')
+        .replace(/\./g, 'Dot');
+      if (previousLogicalId) {
+        dependsOn = `DependsOn: ${previousLogicalId}`;
+      }
+      previousLogicalId = logicalId;
+      return `
+  ${parameterPath.Name.replace(/\//g, 'Slash')
+    .replace(/\-/g, 'Dash')
+    .replace(/\./g, 'Dot')}:
     Type: "AWS::SSM::Parameter"
+    ${dependsOn}
     Properties:
       Name: "${parameterPath.Name}"
       Type: "${parameterPath.Type}"
-      Value: ${parameterPath.Value}
-`).join('')}`;
+      Value: ${parameterPath.Value}`;
+    })
+    .join('')}`;
 }
 
 function storeParameters(parameters) {
