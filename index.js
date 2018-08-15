@@ -41,7 +41,7 @@ function createPaths(object, pathPart = '') {
 
 function storeParameter(parameter) {
   return new Promise(resolve => {
-    console.log('Store parameter name: "%s" value: "%s" type: "%s"', parameter.Name, parameter.Value, parameter.Type);
+    console.log('Store parameter name: "%s" value: "%s" type: "%s"', parameter.Name, parameter.Type === 'SecureString' ? '********' : parameter.Value, parameter.Type);
     return setTimeout(() => {
       function store() {
         return ssm
