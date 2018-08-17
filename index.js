@@ -23,6 +23,10 @@ if (_.isEmpty(argsPath) || _.isUndefined(argsPath)) {
 const normalizedPath = path.normalize(argsPath);
 const delay = args.delay || 1;
 
+function prefixName(name) {
+  return `${args.prefix||''}${name}`;
+}
+
 function createPaths(object, pathPart = '') {
   return _.flattenDeep(
     _.map(object, (value, key) => {
@@ -41,11 +45,17 @@ function createPaths(object, pathPart = '') {
 
 function storeParameter(parameter) {
   return new Promise(resolve => {
-    console.log('Store parameter name: "%s" value: "%s" type: "%s"', parameter.Name, parameter.Type === 'SecureString' ? '********' : parameter.Value, parameter.Type);
+    const prefixedParameter = Object.assign({}, parameter, { Name: prefixName(parameter.Name) });
+    console.log(
+      'Store parameter name: "%s" value: "%s" type: "%s"',
+      prefixedParameter.Name,
+      prefixedParameter.Type === 'SecureString' ? '********' : prefixedParameter.Value,
+      prefixedParameter.Type
+    );
     return setTimeout(() => {
       function store() {
         return ssm
-          .putParameter(_.assign({ Overwrite: true }, parameter))
+          .putParameter(_.assign({ Overwrite: true }, prefixedParameter))
           .promise()
           .then(result => {
             console.log('Parameter stored (Version %s)', result.Version);
@@ -53,11 +63,11 @@ function storeParameter(parameter) {
           });
       }
       return ssm
-        .getParameter({ Name: parameter.Name, WithDecryption: true })
+        .getParameter({ Name: prefixedParameter.Name, WithDecryption: true })
         .promise()
         .then(fetchedParameter => {
           const { Version } = fetchedParameter.Parameter;
-          if (fetchedParameter.Parameter.Value === parameter.Value) {
+          if (fetchedParameter.Parameter.Value === prefixedParameter.Value) {
             console.log('Parameter exists with same value (Version %s)', Version);
             return resolve({ Version });
           }
@@ -91,7 +101,7 @@ Resources: ${parameterPaths
     Type: "AWS::SSM::Parameter"
     ${dependsOn}
     Properties:
-      Name: "${parameterPath.Name}"
+      Name: "${prefixName(parameterPath.Name)}"
       Type: "${parameterPath.Type}"
       Value: ${parameterPath.Value}`;
     })
